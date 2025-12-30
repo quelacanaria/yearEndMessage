@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2025 Reflection Landing Page</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+            background-image: url('yearendmess1.png'); /* Night-time city view from a high-rise perspective */
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: white;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #name-input-section {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        #name-input-section input {
+            padding: 10px;
+            font-size: 16px;
+            margin-right: 10px;
+            border: none;
+            border-radius: 5px;
+        }
+
+        #name-input-section button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #main-content {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            width: 100%;
+            padding-top: 50px; /* Add some top padding to position content higher */
+        }
+
+        #happy-new-year {
+            font-size: 3em;
+            font-weight: bold;
+            color: #ffd700; /* Gold color for festive feel */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            margin-bottom: 20px;
+        }
+
+        #message {
+            font-size: 1.2em;
+            width: 90%; /* Made wider for prominence */
+            max-width: 800px; /* Increased max-width */
+            line-height: 1.6;
+            padding: 30px; /* Increased padding */
+            background: rgba(0, 0, 0, 0.8); /* Slightly more opaque */
+            border-radius: 15px; /* Larger border radius */
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.7); /* Stronger shadow */
+        }
+
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            #happy-new-year {
+                font-size: 2em;
+            }
+            #message {
+                font-size: 1em;
+                padding: 20px;
+                width: 95%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #happy-new-year {
+                font-size: 1.5em;
+            }
+            #message {
+                font-size: 0.9em;
+                padding: 15px;
+                width: 95%;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <div id="name-input-section">
+        <h2>Enter Your Name to Begin</h2>
+        <input type="text" id="user-name-input" placeholder="Your Name">
+        <button onclick="startPage(); enterSite()">Enter</button>
+    </div>
+
+    <div id="main-content"><canvas id="fireworks-canvas"></canvas>
+
+        <h1 id="happy-new-year">Happy New Year 2026!</h1>
+        <p id="message"></p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        // Enable fireworks on click for the entire landing page
+        document.addEventListener('click', function(event) {
+            const x = event.clientX / window.innerWidth;
+            const y = event.clientY / window.innerHeight;
+
+            // Simulate fireworks burst
+            confetti({
+                particleCount: 200,
+                spread: 360,
+                gravity: 0.8,
+                drift: 0.1,
+                origin: { x: x, y: y },
+                colors: ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff', '#ffffff']
+            });
+        });
+
+        function startPage() {
+            const name = document.getElementById('user-name-input').value.trim();
+            if (name === '') {
+                alert('Please enter your name.');
+                return;
+            }
+
+            document.getElementById('name-input-section').style.display = 'none';
+            document.getElementById('main-content').style.display = 'flex';
+
+            document.getElementById('message').innerHTML = `Dear ${name.charAt(0).toUpperCase()+name.slice(1).toLowerCase()},<br><br>2025 has been an incredibly challenging year, 
+            filled with countless struggles, hardships, and moments that tested our resilience. From personal setbacks to global 
+            uncertainties, it felt like every day brought new obstacles. Yet, here we are, standing strong on the last night of 
+            this year, having pushed through it all. We've learned, we've grown, and we've persevered. As we bid farewell to 2025, 
+            let's carry forward the lessons and hope for a brighter, more promising future in the year ahead. You've made it this 
+            far—congratulations on your strength and determination! <br><br> from Quekeneth`;
+        }
+    </script>
+     <script>
+        const canvas = document.getElementById('fireworks-canvas');
+        const ctx = canvas.getContext('2d');
+        let fireworks = [];
+        let particles = [];
+        let isCelebrating = false;
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Firework {
+            constructor(startX, startY, targetX, targetY) {
+                this.x = startX;
+                this.y = startY;
+                this.targetX = targetX;
+                this.targetY = targetY;
+                this.distanceToTarget = Math.sqrt(Math.pow(targetX - startX, 2) + Math.pow(targetY - startY, 2));
+                this.distanceTraveled = 0;
+                this.coordinates = [];
+                this.coordinateCount = 3;
+                while(this.coordinateCount--) { this.coordinates.push([this.x, this.y]); }
+                this.angle = Math.atan2(targetY - startY, targetX - startX);
+                this.speed = 2;
+                this.acceleration = 1.05;
+                this.brightness = Math.random() * 50 + 50;
+            }
+
+            update(index) {
+                this.coordinates.pop();
+                this.coordinates.unshift([this.x, this.y]);
+                this.speed *= this.acceleration;
+                let vx = Math.cos(this.angle) * this.speed;
+                let vy = Math.sin(this.angle) * this.speed;
+                this.distanceTraveled = Math.sqrt(Math.pow(this.x + vx - this.x, 2) + Math.pow(this.y + vy - this.y, 2));
+                
+                if(this.y <= this.targetY) {
+                    explode(this.targetX, this.targetY);
+                    fireworks.splice(index, 1);
+                } else {
+                    this.x += vx;
+                    this.y += vy;
+                }
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.moveTo(this.coordinates[this.coordinates.length - 1][0], this.coordinates[this.coordinates.length - 1][1]);
+                ctx.lineTo(this.x, this.y);
+                ctx.strokeStyle = `hsl(${Math.random() * 360}, 100%, ${this.brightness}%)`;
+                ctx.stroke();
+            }
+        }
+
+        class Particle {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.coordinates = [];
+                this.coordinateCount = 5;
+                while(this.coordinateCount--) { this.coordinates.push([this.x, this.y]); }
+                this.angle = Math.random() * Math.PI * 2;
+                this.speed = Math.random() * 10 + 1;
+                this.friction = 0.95;
+                this.gravity = 1;
+                this.hue = Math.random() * 360;
+                this.brightness = Math.random() * 80 + 20;
+                this.alpha = 1;
+                this.decay = Math.random() * 0.03 + 0.01;
+            }
+
+            update(index) {
+                this.coordinates.pop();
+                this.coordinates.unshift([this.x, this.y]);
+                this.speed *= this.friction;
+                this.x += Math.cos(this.angle) * this.speed;
+                this.y += Math.sin(this.angle) * this.speed + this.gravity;
+                this.alpha -= this.decay;
+                if(this.alpha <= this.decay) {
+                    particles.splice(index, 1);
+                }
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.moveTo(this.coordinates[this.coordinates.length - 1][0], this.coordinates[this.coordinates.length - 1][1]);
+                ctx.lineTo(this.x, this.y);
+                ctx.strokeStyle = `hsla(${this.hue}, 100%, ${this.brightness}%, ${this.alpha})`;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+        }
+
+        function explode(x, y) {
+            let count = 70;
+            while(count--) {
+                particles.push(new Particle(x, y));
+            }
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.globalCompositeOperation = 'lighter';
+
+            fireworks.forEach((fw, i) => { fw.draw(); fw.update(i); });
+            particles.forEach((p, i) => { p.draw(); p.update(i); });
+
+            if (isCelebrating && Math.random() < 0.04) {
+                launch(Math.random() * canvas.width, canvas.height);
+            }
+        }
+
+        function launch(x, y) {
+            fireworks.push(new Firework(x, canvas.height, x, Math.random() * canvas.height / 2));
+        }
+
+        window.addEventListener('mousedown', (e) => {
+            if (isCelebrating) launch(e.clientX, e.clientY);
+        });
+
+        function enterSite() {
+            // const name = document.getElementById('name-input').value.trim();
+            // if (!name) return alert("Please enter your name.");
+            // document.getElementById('display-name').innerText = name;
+            // document.getElementById('entry-overlay').style.display = 'none';
+            // document.getElementById('main-content').classList.remove('hidden');
+            isCelebrating = true;
+        }
+
+        animate();
+    </script>
+</body>
+</html>
